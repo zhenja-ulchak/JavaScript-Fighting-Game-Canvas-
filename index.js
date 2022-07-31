@@ -1,6 +1,6 @@
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
-
+// розмір вікна
 canvas.width = 1024
 canvas.height = 576
     // початкова позиція на екрані
@@ -10,36 +10,48 @@ const gravity = 0.7
 // класс
 class Sprite {
     // конструктор 
-    constructor({ position, velociti, color = 'red' }) {
+    constructor({ position, velociti, color = 'red', offset }) {
             this.position = position
             this.velociti = velociti
             this.height = 150
             this.lastKey
+            this.width = 50
+            this.isAttacking
             this.attackBox = {
-                position: this.position,
+                position: {
+                    x: this.position.x,
+                    y: this.position.y
+                },
+                offset,
                 width: 100,
                 height: 50,
             }
             this.color = color
+            this.healt = 100
         }
         // початкова позиція 2 обєкта
     draw() {
             c.fillStyle = this.color
-            c.fillRect(this.position.x, this.position.y, 50, this.height);
+            c.fillRect(this.position.x, this.position.y, this.width, this.height);
             //atackbox атака
-            c.fillStyle = 'green'
-            c.fillRect(
-                this.attackBox.position.x,
-                this.attackBox.position.y,
-                this.attackBox.width,
-                this.attackBox.height
-            );
+            if (this.isAttacking) {
+                c.fillStyle = 'green'
+                c.fillRect(
+                    this.attackBox.position.x,
+                    this.attackBox.position.y,
+                    this.attackBox.width,
+                    this.attackBox.height
+                );
+            }
         }
-        // обновлення позиції на 10 рх
+        // обновлення позиції 
     update() {
         this.draw()
-        this.position.y += this.velociti.y
 
+        this.attackBox.position.x = this.position.x + this.attackBox.offset.x
+        this.attackBox.position.y = this.position.y
+
+        this.position.y += this.velociti.y
         this.position.x += this.velociti.x
 
         // якшо висота обща більша чи рівна висоті окна канваса то 
@@ -47,6 +59,12 @@ class Sprite {
             // ми її обнуляєм
             this.velociti.y = 0
         } else this.velociti.y += gravity
+    }
+    attack() {
+        this.isAttacking = true
+        setTimeout(() => {
+            this.isAttacking = false
+        }, 100);
     }
 
 }
@@ -59,6 +77,10 @@ const player = new Sprite({
     velociti: {
         x: 0,
         y: 10
+    },
+    offset: {
+        x: 0,
+        y: 0
     }
 
 });
@@ -73,7 +95,11 @@ const enemy = new Sprite({
         x: 0,
         y: 0
     },
-    color: 'blue'
+    color: 'blue',
+    offset: {
+        x: -50,
+        y: 0
+    }
 
 });
 
@@ -96,10 +122,19 @@ const keys = {
     },
     ArrowRight: {
         pressed: false
-    }
+    },
+
 }
 
 let lastKey
+
+function rectCollisiuon({ rectangel1, rectangel2, }) {
+    return (
+        rectangel1.attackBox.position.x + rectangel1.attackBox.width >=
+        rectangel2.position.x && rectangel1.attackBox.position.x <= rectangel2.position.x + rectangel2.width &&
+        rectangel1.attackBox.position.y + rectangel1.attackBox.height >= rectangel2.position.y &&
+        rectangel1.attackBox.position.y <= rectangel2.position.y + rectangel2.height)
+}
 
 function animate() {
     // указує бравзеру що потрібно зробити
@@ -124,11 +159,31 @@ function animate() {
         enemy.velociti.x = 5
     }
 
-    //візуалізація атаки
-    if (player.attackBox.position.x + player.attackBox.width >= enemy.position.x) {
+    // атакa
+    if (rectCollisiuon({
+            rectangel1: player,
+            rectangel2: enemy
+        }) && player.isAttacking) {
+        player.isAttacking = false
+        enemy.healt -= 20
+        document.querySelector('#enemyH').style.width = enemy.healt + '%'
+
+        console.log('player attack');
+
 
     }
+    if (rectCollisiuon({
+            rectangel1: enemy,
+            rectangel2: player
+        }) && enemy.isAttacking) {
+        player.healt -= 20
+        document.querySelector('#playerH').style.width = player.healt + '%'
 
+        enemy.isAttacking = false
+        console.log('enemy attack');
+
+
+    }
 
 
 }
@@ -148,6 +203,9 @@ window.addEventListener('keydown', (event) => {
             player.velociti.y = -20
             player.lastKey = 'w'
             break
+        case ' ':
+            player.attack()
+            break
 
             //second player
 
@@ -162,6 +220,10 @@ window.addEventListener('keydown', (event) => {
         case 'ArrowUp':
             enemy.velociti.y = -20
             lastKey = 'ArrowUp'
+            break
+        case 'ArrowDown':
+            enemy.isAttacking = true
+            lastKey = 'ArrowDown'
             break
     }
     console.log(event);
