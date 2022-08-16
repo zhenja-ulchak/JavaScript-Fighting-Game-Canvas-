@@ -136,6 +136,39 @@ function rectCollisiuon({ rectangel1, rectangel2, }) {
         rectangel1.attackBox.position.y <= rectangel2.position.y + rectangel2.height)
 }
 
+
+function determineWinner({ player, enemy, timerId }) {
+    clearTimeout(timerId)
+    document.querySelector('#displText').style.display = 'flex'
+    if (player.healt === enemy.healt) {
+        document.querySelector('#displText').innerHTML = 'TIME'
+
+    } else if (player.healt > enemy.healt) {
+        document.querySelector('#displText').innerHTML = 'Player 1 wins'
+
+    } else if (player.healt < enemy.healt) {
+        document.querySelector('#displText').innerHTML = 'Player 2 wins'
+
+    }
+}
+
+let taimer = 10;
+let timerId
+
+function secTaimer() {
+    if (taimer > 0) {
+        timerId = setTimeout(secTaimer, 1000);
+        taimer--;
+        document.querySelector('#taimer').innerHTML = taimer
+    }
+    if (taimer === 0) {
+
+        determineWinner({ player, enemy, timerId })
+    }
+}
+secTaimer();
+
+
 function animate() {
     // указує бравзеру що потрібно зробити
     // анімацію і просить його запланіровати перерісовку анімації
@@ -184,7 +217,10 @@ function animate() {
 
 
     }
-
+    // якшо нема хп
+    if (enemy.healt <= 0 || player.healt <= 0) {
+        determineWinner({ player, enemy, timerId })
+    }
 
 }
 animate();

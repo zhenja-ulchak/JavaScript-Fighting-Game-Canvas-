@@ -15,11 +15,28 @@
     padding: 20px;
 }
 
+.time {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    display: none;
+}
+
 .taimer {
     background-color: rgb(94, 155, 134);
     height: 100px;
     width: 100px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .first-healt {
