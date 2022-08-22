@@ -7,69 +7,25 @@ canvas.height = 576
 c.fillRect(0, 0, canvas.width, canvas.height);
 const gravity = 0.7
 
-// класс
-class Sprite {
-    // конструктор 
-    constructor({ position, velociti, color = 'red', offset }) {
-            this.position = position
-            this.velociti = velociti
-            this.height = 150
-            this.lastKey
-            this.width = 50
-            this.isAttacking
-            this.attackBox = {
-                position: {
-                    x: this.position.x,
-                    y: this.position.y
-                },
-                offset,
-                width: 100,
-                height: 50,
-            }
-            this.color = color
-            this.healt = 100
-        }
-        // початкова позиція 2 обєкта
-    draw() {
-            c.fillStyle = this.color
-            c.fillRect(this.position.x, this.position.y, this.width, this.height);
-            //atackbox атака
-            if (this.isAttacking) {
-                c.fillStyle = 'green'
-                c.fillRect(
-                    this.attackBox.position.x,
-                    this.attackBox.position.y,
-                    this.attackBox.width,
-                    this.attackBox.height
-                );
-            }
-        }
-        // обновлення позиції 
-    update() {
-        this.draw()
+const background = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageSrc: './img/background.png'
+})
 
-        this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
-
-        this.position.y += this.velociti.y
-        this.position.x += this.velociti.x
-
-        // якшо висота обща більша чи рівна висоті окна канваса то 
-        if (this.position.y + this.height + this.velociti.y >= canvas.height) {
-            // ми її обнуляєм
-            this.velociti.y = 0
-        } else this.velociti.y += gravity
-    }
-    attack() {
-        this.isAttacking = true
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 100);
-    }
-
-}
-// початкова позиція
-const player = new Sprite({
+const shop = new Sprite({
+        position: {
+            x: 680,
+            y: 240
+        },
+        imageSrc: './img/shop.png',
+        scale: 1.9,
+        frameMax: 6,
+    })
+    // початкова позиція
+const player = new Fighter({
     position: {
         x: 0,
         y: 0
@@ -86,7 +42,7 @@ const player = new Sprite({
 });
 player.draw();
 // початкова позиція
-const enemy = new Sprite({
+const enemy = new Fighter({
     position: {
         x: 400,
         y: 100
@@ -127,45 +83,6 @@ const keys = {
 }
 
 let lastKey
-
-function rectCollisiuon({ rectangel1, rectangel2, }) {
-    return (
-        rectangel1.attackBox.position.x + rectangel1.attackBox.width >=
-        rectangel2.position.x && rectangel1.attackBox.position.x <= rectangel2.position.x + rectangel2.width &&
-        rectangel1.attackBox.position.y + rectangel1.attackBox.height >= rectangel2.position.y &&
-        rectangel1.attackBox.position.y <= rectangel2.position.y + rectangel2.height)
-}
-
-
-function determineWinner({ player, enemy, timerId }) {
-    clearTimeout(timerId)
-    document.querySelector('#displText').style.display = 'flex'
-    if (player.healt === enemy.healt) {
-        document.querySelector('#displText').innerHTML = 'TIME'
-
-    } else if (player.healt > enemy.healt) {
-        document.querySelector('#displText').innerHTML = 'Player 1 wins'
-
-    } else if (player.healt < enemy.healt) {
-        document.querySelector('#displText').innerHTML = 'Player 2 wins'
-
-    }
-}
-
-let taimer = 10;
-let timerId
-
-function secTaimer() {
-    if (taimer > 0) {
-        timerId = setTimeout(secTaimer, 1000);
-        taimer--;
-        document.querySelector('#taimer').innerHTML = taimer
-    }
-    if (taimer === 0) {
-
-        determineWinner({ player, enemy, timerId })
-    }
-}
 secTaimer();
 
 
@@ -175,8 +92,11 @@ function animate() {
     window.requestAnimationFrame(animate);
 
     c.clearRect(0, 0, canvas.width, canvas.height)
+    background.update()
+    shop.update()
     player.update()
     enemy.update()
+
     player.velociti.x = 0
     enemy.velociti.x = 0
         //  player рухи
