@@ -37,8 +37,9 @@ const player = new Fighter({
     offset: {
         x: 0,
         y: 0
-    }
-
+    },
+    imageSrc: './img/Medieval/Idle.png',
+    frameMax: 6,
 });
 player.draw();
 // початкова позиція

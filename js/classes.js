@@ -40,12 +40,30 @@ class Sprite {
             }
     }
 
+
 }
 
 // класс
-class Fighter {
+class Fighter extends Sprite {
     // конструктор 
-    constructor({ position, velociti, color = 'red', offset }) {
+    constructor({
+            position,
+            velociti,
+            color = 'red',
+            offset,
+            imageSrc,
+            scale = 1,
+            frameMax = 1
+        }) {
+
+            super({
+                position,
+                imageSrc,
+                scale,
+                frameMax,
+
+            })
+
             this.position = position
             this.velociti = velociti
             this.height = 150
@@ -63,6 +81,9 @@ class Fighter {
             }
             this.color = color
             this.healt = 100
+            this.framesCurent = 0
+            this.framesEleps = 0
+            this.framesHOl = 10
         }
         // початкова позиція 2 обєкта
     draw() {
