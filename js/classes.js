@@ -1,7 +1,13 @@
 // класс
 class Sprite {
     // конструктор 
-    constructor({ position, imageSrc, scale = 1, frameMax = 1 }) {
+    constructor({
+            position,
+            imageSrc,
+            scale = 1,
+            frameMax = 1,
+            offset = { x: 0, y: 0 },
+        }) {
             this.position = position
             this.height = 150
             this.width = 50
@@ -12,24 +18,24 @@ class Sprite {
             this.framesCurent = 0
             this.framesEleps = 0
             this.framesHOl = 10
+            this.offset = offset
         }
         // початкова позиція 2 обєкта
     draw() {
-            c.drawImage(
-                this.image,
-                this.framesCurent * (this.image.width / this.frameMax),
-                0,
-                this.image.width / this.frameMax,
-                this.image.height,
-                this.position.x,
-                this.position.y,
-                (this.image.width / this.frameMax) * this.scale,
-                this.image.height * this.scale
-            );
-        }
-        // обновлення позиції 
-    update() {
-        this.draw()
+        c.drawImage(
+            this.image,
+            this.framesCurent * (this.image.width / this.frameMax),
+            0,
+            this.image.width / this.frameMax,
+            this.image.height,
+            this.position.x - this.offset.x,
+            this.position.y - this.offset.y,
+            (this.image.width / this.frameMax) * this.scale,
+            this.image.height * this.scale
+        );
+    }
+
+    animatePlayer() {
         this.framesEleps++
             if (this.framesEleps % this.framesHOl === 0) {
                 if (this.framesCurent < this.frameMax - 1) {
@@ -38,6 +44,13 @@ class Sprite {
                     this.framesCurent = 0
                 }
             }
+    }
+
+
+    // обновлення позиції 
+    update() {
+        this.draw()
+        this.animatePlayer()
     }
 
 
@@ -50,17 +63,25 @@ class Fighter extends Sprite {
             position,
             velociti,
             color,
-            offset,
+            run,
             imageSrc,
             scale = 1,
-            frameMax = 1
+            frameMax = 1,
+            offset = { x: 0, y: 0 },
         }) {
             super({
                 position,
                 imageSrc,
                 scale,
                 frameMax,
+                offset,
             })
+            this.run = run
+            for (const runing in this.run) {
+                run[runing].image = new Image()
+                run[runing].image.src = run[runing].imageSrc
+            }
+
             this.position = position
             this.imageSrc = imageSrc
             this.velociti = velociti
@@ -101,6 +122,7 @@ class Fighter extends Sprite {
         // обновлення позиції 
     update() {
         this.draw()
+        this.animatePlayer()
 
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
@@ -119,6 +141,30 @@ class Fighter extends Sprite {
         setTimeout(() => {
             this.isAttacking = false
         }, 100);
+    }
+    switchSprite(sprite) {
+        switch (sprite) {
+            case 'idle':
+                if (this.image !== this.run.idle.image) {
+                    this.image = this.run.idle.image
+                    this.frameMax = this.run.idle.frameMax
+                }
+                break;
+            case 'runn':
+                if (this.image !== this.run.runn.image) {
+                    this.image = this.run.runn.image
+                    this.frameMax = this.run.runn.frameMax
+                }
+                break;
+            case 'jump':
+                if (this.image !== this.run.jump.image) {
+                    this.image = this.run.jump.image
+                    this.frameMax = this.run.jump.frameMax
+                }
+                break;
+
+
+        }
     }
 
 }

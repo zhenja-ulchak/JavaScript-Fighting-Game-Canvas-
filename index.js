@@ -26,10 +26,29 @@ const shop = new Sprite({
     })
     // початкова позиція
 const player = new Fighter({
+    run: {
+        idle: {
+            imageSrc: './img/player1/Idle.png',
+            frameMax: 6,
+        },
+        runn: {
+            imageSrc: './img/player1/Run.png',
+            frameMax: 8,
+        },
+        jump: {
+            imageSrc: './img/player1/Jump.png',
+            frameMax: 2,
+        }
+    },
     imageSrc: './img/player1/Idle.png',
-    frameMax: 6,
+    frameMax: 8,
+    scale: 1.3,
+    offset: {
+        x: 285,
+        y: 150
+    },
     position: {
-        x: 0,
+        x: 50,
         y: 0
     },
     velociti: {
@@ -48,7 +67,7 @@ player.draw();
 const enemy = new Fighter({
     position: {
         x: 400,
-        y: 100
+        y: 180
     },
     velociti: {
         x: 0,
@@ -60,7 +79,8 @@ const enemy = new Fighter({
         y: 0
     },
     imageSrc: './img/Sprites/Idle.png',
-    frameMax: 8,
+    frameMax: 10,
+    scale: 2.3,
 
 });
 console.log(player.imageSrc);
@@ -105,11 +125,20 @@ function animate() {
     player.velociti.x = 0
     enemy.velociti.x = 0
         //  player рухи
+    player.switchSprite('idle')
     if (keys.a.pressed && player.lastKey === 'a') {
         player.velociti.x = -5
+        player.switchSprite('runn')
     } else if (keys.d.pressed && player.lastKey === 'd') {
+        player.switchSprite('runn')
         player.velociti.x = 5
     }
+
+    if (player.velociti.y < 0) {
+        player.switchSprite('jump')
+    }
+
+
     //enemy рухи
     if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velociti.x = -5
