@@ -49,22 +49,20 @@ class Fighter extends Sprite {
     constructor({
             position,
             velociti,
-            color = 'red',
+            color,
             offset,
             imageSrc,
             scale = 1,
             frameMax = 1
         }) {
-
             super({
                 position,
                 imageSrc,
                 scale,
                 frameMax,
-
             })
-
             this.position = position
+            this.imageSrc = imageSrc
             this.velociti = velociti
             this.height = 150
             this.lastKey
@@ -86,20 +84,20 @@ class Fighter extends Sprite {
             this.framesHOl = 10
         }
         // початкова позиція 2 обєкта
-    draw() {
-            c.fillStyle = this.color
-            c.fillRect(this.position.x, this.position.y, this.width, this.height);
-            //atackbox атака
-            if (this.isAttacking) {
-                c.fillStyle = 'green'
-                c.fillRect(
-                    this.attackBox.position.x,
-                    this.attackBox.position.y,
-                    this.attackBox.width,
-                    this.attackBox.height
-                );
-            }
-        }
+        // draw() {
+        //         c.fillStyle = this.color
+        //         c.fillRect(this.position.x, this.position.y, this.width, this.height);
+        //         //atackbox атака
+        //         if (this.isAttacking) {
+        //             c.fillStyle = 'green'
+        //             c.fillRect(
+        //                 this.attackBox.position.x,
+        //                 this.attackBox.position.y,
+        //                 this.attackBox.width,
+        //                 this.attackBox.height
+        //             );
+        //         }
+        //     }
         // обновлення позиції 
     update() {
         this.draw()

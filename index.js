@@ -26,6 +26,8 @@ const shop = new Sprite({
     })
     // початкова позиція
 const player = new Fighter({
+    imageSrc: './img/player1/Idle.png',
+    frameMax: 6,
     position: {
         x: 0,
         y: 0
@@ -38,9 +40,9 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
-    imageSrc: './img/Medieval/Idle.png',
-    frameMax: 6,
+
 });
+console.log(player.imageSrc);
 player.draw();
 // початкова позиція
 const enemy = new Fighter({
@@ -56,10 +58,12 @@ const enemy = new Fighter({
     offset: {
         x: -50,
         y: 0
-    }
+    },
+    imageSrc: './img/Sprites/Idle.png',
+    frameMax: 8,
 
 });
-
+console.log(player.imageSrc);
 enemy.draw();
 
 console.log(player);
