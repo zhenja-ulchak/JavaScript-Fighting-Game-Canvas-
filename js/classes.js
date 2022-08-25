@@ -104,6 +104,7 @@ class Fighter extends Sprite {
             this.framesCurent = 0
             this.framesEleps = 0
             this.framesHOl = 10
+            this.dead = false
         }
         // початкова позиція 2 обєкта
         // draw() {
@@ -123,7 +124,9 @@ class Fighter extends Sprite {
         // обновлення позиції 
     update() {
         this.draw()
-        this.animatePlayer()
+        if (!this.dead) {
+            this.animatePlayer()
+        }
 
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
@@ -147,10 +150,13 @@ class Fighter extends Sprite {
     }
 
     takeHIT() {
-        this.switchSprite('hit')
         this.healt -= 20
+        if (this.healt <= 0) {
+            this.switchSprite('death')
+        } else {
+            this.switchSprite('hit')
+        }
     }
-
     attack() {
         this.switchSprite('attack')
         this.isAttacking = true
@@ -159,7 +165,16 @@ class Fighter extends Sprite {
             // }, 100);
     }
     switchSprite(sprite) {
+        if (this.image === this.run.death.image) {
+            if (this.framesCurent === this.run.death.frameMax - 1) {
+                this.dead = true
+            }
+            return
+        }
         if (this.image === this.run.attack.image && this.framesCurent < this.run.attack.frameMax - 1) {
+            return
+        }
+        if (this.image === this.run.hit.image && this.framesCurent < this.run.hit.frameMax - 1) {
             return
         }
 
@@ -201,6 +216,13 @@ class Fighter extends Sprite {
                 if (this.image !== this.run.hit.image) {
                     this.image = this.run.hit.image
                     this.frameMax = this.run.hit.frameMax
+                    this.framesCurent = 0
+                }
+                break;
+            case 'death':
+                if (this.image !== this.run.death.image) {
+                    this.image = this.run.death.image
+                    this.frameMax = this.run.death.frameMax
                     this.framesCurent = 0
                 }
                 break;
