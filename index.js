@@ -38,7 +38,27 @@ const player = new Fighter({
         jump: {
             imageSrc: './img/player1/Jump.png',
             frameMax: 2,
+        },
+        fall: {
+            imageSrc: './img/player1/Fall.png',
+            frameMax: 2,
+        },
+        attack: {
+            imageSrc: './img/player1/Attack_1.png',
+            frameMax: 6,
+        },
+        hit: {
+            imageSrc: './img/player1/Hit.png',
+            frameMax: 4,
         }
+    },
+    attackBox: {
+        offset: {
+            x: 0,
+            y: 0
+        },
+        width: 100,
+        height: 50
     },
     imageSrc: './img/player1/Idle.png',
     frameMax: 8,
@@ -67,7 +87,7 @@ player.draw();
 const enemy = new Fighter({
     position: {
         x: 400,
-        y: 180
+        y: 150
     },
     velociti: {
         x: 0,
@@ -76,11 +96,45 @@ const enemy = new Fighter({
     color: 'blue',
     offset: {
         x: -50,
-        y: 0
+        y: 45
     },
     imageSrc: './img/Sprites/Idle.png',
     frameMax: 10,
     scale: 2.3,
+    run: {
+        idle: {
+            imageSrc: './img/Sprites/Idle.png',
+            frameMax: 10,
+        },
+        runn: {
+            imageSrc: './img/Sprites/Run.png',
+            frameMax: 6,
+        },
+        jump: {
+            imageSrc: './img/Sprites/Jump.png',
+            frameMax: 2,
+        },
+        fall: {
+            imageSrc: './img/Sprites/Fall.png',
+            frameMax: 2,
+        },
+        attack: {
+            imageSrc: './img/Sprites/Attack2.png',
+            frameMax: 4,
+        },
+        hit: {
+            imageSrc: './img/Sprites/Get Hit.png',
+            frameMax: 3,
+        }
+    },
+    attackBox: {
+        offset: {
+            x: 150,
+            y: 0
+        },
+        width: 100,
+        height: 50
+    }
 
 });
 console.log(player.imageSrc);
@@ -132,10 +186,16 @@ function animate() {
     } else if (keys.d.pressed && player.lastKey === 'd') {
         player.switchSprite('runn')
         player.velociti.x = 5
+    } else {
+        player.switchSprite('idle')
     }
+
+    //прижок player
 
     if (player.velociti.y < 0) {
         player.switchSprite('jump')
+    } else if (player.velociti.y > 0) {
+        player.switchSprite('fall')
     }
 
 
@@ -144,7 +204,19 @@ function animate() {
         enemy.velociti.x = -5
     } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velociti.x = 5
+        enemy.switchSprite('runn')
+    } else {
+        enemy.switchSprite('idle')
     }
+
+    //прижок enemy
+
+    if (enemy.velociti.y < 0) {
+        enemy.switchSprite('jump')
+    } else if (enemy.velociti.y > 0) {
+        enemy.switchSprite('fall')
+    }
+
 
     // атакa
     if (rectCollisiuon({
@@ -152,12 +224,9 @@ function animate() {
             rectangel2: enemy
         }) && player.isAttacking) {
         player.isAttacking = false
-        enemy.healt -= 20
+        enemy.takeHIT()
         document.querySelector('#enemyH').style.width = enemy.healt + '%'
-
         console.log('player attack');
-
-
     }
     if (rectCollisiuon({
             rectangel1: enemy,
@@ -165,12 +234,20 @@ function animate() {
         }) && enemy.isAttacking) {
         player.healt -= 20
         document.querySelector('#playerH').style.width = player.healt + '%'
-
         enemy.isAttacking = false
         console.log('enemy attack');
-
+    }
+    //якщо ігрок атакує мимо отменяєм атаку
+    if (player.isAttacking && player.framesCurent === 6) {
+        player.isAttacking = false
 
     }
+    //enemy
+    if (enemy.isAttacking && enemy.framesCurent === 4) {
+        enemy.isAttacking = false
+
+    }
+
     // якшо нема хп
     if (enemy.healt <= 0 || player.healt <= 0) {
         determineWinner({ player, enemy, timerId })
@@ -212,7 +289,7 @@ window.addEventListener('keydown', (event) => {
             lastKey = 'ArrowUp'
             break
         case 'ArrowDown':
-            enemy.isAttacking = true
+            enemy.attack()
             lastKey = 'ArrowDown'
             break
     }
